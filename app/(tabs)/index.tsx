@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Camera, ScanLine, Flame, Drumstick, Candy, Wheat, Droplet, Apple } from "lucide-react-native";
+import { Scan, User, Beef, Flame, Drumstick, Wheat, Apple, Bone, Pill, EggFried, Croissant, Milk, Banana, SunDim } from "lucide-react-native";
 import { useHealth } from "@/contexts/HealthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CalorieDistributionChart from "@/components/CalorieDistributionChart";
 
 export default function TodayScreen() {
     const router = useRouter();
@@ -30,104 +31,113 @@ export default function TodayScreen() {
                     contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 20 }]}
                     showsVerticalScrollIndicator={false}
                 >
-                    <Text style={styles.header}>Green Food</Text>
+                    <Text style={styles.header}>Healthy Food</Text>
                     <Text style={styles.subtitle}>Track your healthy journey</Text>
 
-                    <View style={styles.scanButtons}>
+                    <CalorieDistributionChart nutrition={dailyStats.nutrition} />
+
+                    <View style={styles.scanButtonsRow}>
                         <TouchableOpacity
-                            style={[styles.scanButton, styles.scanButtonFood]}
+                            style={styles.scanButton}
                             onPress={() => router.push('/food-scan' as any)}
-                            activeOpacity={0.8}
+                            activeOpacity={0.85}
                         >
-                            <ScanLine size={24} color="#FFFFFF" strokeWidth={2.5} />
-                            <Text style={styles.scanButtonText}>Scan{"\n"}Food</Text>
+                            <LinearGradient
+                                colors={['#4CAF50', '#45A049'] as const}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={styles.scanGradient}
+                            >
+                                <Scan size={30} color="#FFFFFF" strokeWidth={2.5} />
+                                <Text style={styles.scanButtonText}>Scan{"\n"}Food</Text>
+                            </LinearGradient>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.scanButton, styles.scanButtonFace]}
+                            style={styles.scanButton}
                             onPress={() => router.push('/face-scan' as any)}
-                            activeOpacity={0.8}
+                            activeOpacity={0.85}
                         >
-                            <Camera size={24} color="#FFFFFF" strokeWidth={2.5} />
-                            <Text style={styles.scanButtonText}>Scan{"\n"}Face</Text>
+                            <LinearGradient
+                                colors={['#2196F3', '#1976D2'] as const}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={styles.scanGradient}
+                            >
+                                <User size={30} color="#FFFFFF" strokeWidth={2.5} />
+                                <Text style={styles.scanButtonText}>Scan{"\n"}Face</Text>
+                            </LinearGradient>
                         </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.healthScoreCard}>
-                        <Text style={styles.healthScoreLabel}>Health Score</Text>
-                        <View style={styles.scoreRow}>
-                            <Text style={styles.healthScoreNumber}>{dailyStats.healthScore}</Text>
-                            <View style={styles.scoreProgressBar}>
-                                <View style={[styles.scoreProgressFill, {
-                                    width: `${dailyStats.healthScore}%`,
-                                    backgroundColor: healthScoreColor
-                                }]} />
-                            </View>
-                        </View>
                     </View>
 
                     <View style={styles.nutritionCard}>
                         <View style={styles.nutritionItem}>
                             <View style={[styles.nutritionIconCircle, { backgroundColor: '#FFEBE5' }]}>
-                                <Flame size={24} color="#FF6B4A" />
+                                <Flame size={30} color="#FF6B4A" />
                             </View>
                             <View style={styles.nutritionTextContainer}>
                                 <Text style={styles.nutritionLabel}>Calories</Text>
                                 <Text style={styles.nutritionValue}>{dailyStats.nutrition.calories}</Text>
                                 <Text style={styles.nutritionGoal}>/ 2000</Text>
                             </View>
+                            <View style={styles.circularProgress}>
                             <Text style={styles.nutritionPercentage}>
                                 {Math.round((dailyStats.nutrition.calories / 2000) * 100)}%
                             </Text>
+                            </View>
                         </View>
 
                         <View style={styles.divider} />
 
                         <View style={styles.nutritionItem}>
                             <View style={[styles.nutritionIconCircle, { backgroundColor: '#E5F0FF' }]}>
-                                <Drumstick size={24} color="#4A90E2" />
+                                <Drumstick size={30} color="#4A90E2" />
                             </View>
                             <View style={styles.nutritionTextContainer}>
                                 <Text style={styles.nutritionLabel}>Protein</Text>
                                 <Text style={styles.nutritionValue}>{dailyStats.nutrition.protein}g</Text>
                                 <Text style={styles.nutritionGoal}>/ 50g</Text>
                             </View>
+                            <View style={styles.circularProgress}>
                             <Text style={styles.nutritionPercentage}>
                                 {Math.round((dailyStats.nutrition.protein / 50) * 100)}%
                             </Text>
+                            </View>
                         </View>
 
                         <View style={styles.divider} />
 
                         <View style={styles.nutritionItem}>
-                            <View style={[styles.nutritionIconCircle, { backgroundColor: '#FFF4E5' }]}>
-                                <Candy size={24} color="#FFA726" />
+                            <View style={[styles.nutritionIconCircle, { backgroundColor: '#fdebf8' }]}>
+                                <Croissant size={30} color="#c3419a" />
                             </View>
                             <View style={styles.nutritionTextContainer}>
                                 <Text style={styles.nutritionLabel}>Sugar</Text>
                                 <Text style={styles.nutritionValue}>{dailyStats.nutrition.sugar}g</Text>
                                 <Text style={styles.nutritionGoal}>/ 50g</Text>
                             </View>
+                            <View style={styles.circularProgress}>
                             <Text style={styles.nutritionPercentage}>
                                 {Math.round((dailyStats.nutrition.sugar / 50) * 100)}%
                             </Text>
+                            </View>
                         </View>
 
                         <View style={styles.divider} />
 
                         <View style={styles.nutritionRow}>
                             <View style={styles.macroMini}>
-                                <Wheat size={18} color="#EAB308" />
+                                <Wheat size={24} color="#EAB308" />
                                 <Text style={styles.macroMiniLabel}>Carbs</Text>
                                 <Text style={styles.macroMiniValue}>{dailyStats.nutrition.carbs}g</Text>
                             </View>
                             <View style={styles.macroMini}>
-                                <Droplet size={18} color="#DC2626" />
+                                <Beef size={24} color="#dd3e6e" />
                                 <Text style={styles.macroMiniLabel}>Fats</Text>
                                 <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fats}g</Text>
                             </View>
                             <View style={styles.macroMini}>
-                                <Apple size={18} color="#16A34A" />
+                                <Apple size={24} color="#16A34A" />
                                 <Text style={styles.macroMiniLabel}>Fiber</Text>
                                 <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fiber}g</Text>
                             </View>
@@ -136,31 +146,79 @@ export default function TodayScreen() {
 
                     <View style={styles.vitaminsSection}>
                         <Text style={styles.sectionTitle}>Vitamins & Minerals</Text>
-                        <View style={styles.vitaminsCard}>
-                            {dailyStats.vitamins?.slice(0, 6).map((vitamin, index) => (
-                                <View key={index}>
-                                    {index > 0 && <View style={styles.vitaminDivider} />}
-                                    <View style={styles.vitaminRow}>
-                                        <View style={styles.vitaminLeft}>
-                                            <Text style={styles.vitaminName}>{vitamin.name}</Text>
-                                            <Text style={styles.vitaminAmount}>
-                                                {vitamin.value} {vitamin.unit}
-                                            </Text>
-                                        </View>
-                                        <View style={styles.vitaminRight}>
-                                            <View style={styles.vitaminBarContainer}>
-                                                <View style={[styles.vitaminBar, {
-                                                    width: `${Math.min(vitamin.percentage, 100)}%`,
-                                                    backgroundColor: vitamin.color,
-                                                }]} />
-                                            </View>
-                                            <Text style={[styles.vitaminPercent, { color: vitamin.color }]}>
-                                                {vitamin.percentage}%
-                                            </Text>
-                                        </View>
-                                    </View>
+
+                        <View style={styles.nutritionCard}>
+                            <View style={styles.nutritionItem}>
+                                <View style={[styles.nutritionIconCircle, { backgroundColor: '#dfeef1' }]}>
+                                    <Bone size={30} color="#849093" />
                                 </View>
-                            ))}
+                                <View style={styles.nutritionTextContainer}>
+                                    <Text style={styles.nutritionLabel}>Calcium</Text>
+                                    <Text style={styles.nutritionValue}>{dailyStats.nutrition.calories}</Text>
+                                    <Text style={styles.nutritionGoal}>/ 1180 mg</Text>
+                                </View>
+                                <View style={styles.circularProgress}>
+                                    <Text style={styles.nutritionPercentage}>
+                                        {Math.round((dailyStats.nutrition.calories / 2000) * 100)}%
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.divider} />
+
+                            <View style={styles.nutritionItem}>
+                                <View style={[styles.nutritionIconCircle, { backgroundColor: '#c4fac8' }]}>
+                                    <Pill size={30} color="#5bd664" />
+                                </View>
+                                <View style={styles.nutritionTextContainer}>
+                                    <Text style={styles.nutritionLabel}>Magnesium</Text>
+                                    <Text style={styles.nutritionValue}>{dailyStats.nutrition.protein}g</Text>
+                                    <Text style={styles.nutritionGoal}>/ 450 mg</Text>
+                                </View>
+                                <View style={styles.circularProgress}>
+                                    <Text style={styles.nutritionPercentage}>
+                                        {Math.round((dailyStats.nutrition.protein / 50) * 100)}%
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.divider} />
+
+                            <View style={styles.nutritionItem}>
+                                <View style={[styles.nutritionIconCircle, { backgroundColor: '#FFF4E5' }]}>
+                                    <Banana size={30} color="#FFA726" />
+                                </View>
+                                <View style={styles.nutritionTextContainer}>
+                                    <Text style={styles.nutritionLabel}>Potassium</Text>
+                                    <Text style={styles.nutritionValue}>{dailyStats.nutrition.sugar}g</Text>
+                                    <Text style={styles.nutritionGoal}>/ 3970 mg</Text>
+                                </View>
+                                <View style={styles.circularProgress}>
+                                    <Text style={styles.nutritionPercentage}>
+                                        {Math.round((dailyStats.nutrition.sugar / 50) * 100)}%
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.divider} />
+
+                            <View style={styles.nutritionRow}>
+                                <View style={styles.macroMini}>
+                                    <EggFried size={24} color="#EAB308" />
+                                    <Text style={styles.macroMiniLabel}>Iron</Text>
+                                    <Text style={styles.macroMiniValue}>{dailyStats.nutrition.carbs} mg</Text>
+                                </View>
+                                <View style={styles.macroMini}>
+                                    <Milk size={24} color="#31bfea" />
+                                    <Text style={styles.macroMiniLabel}>Zinc</Text>
+                                    <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fats} mg</Text>
+                                </View>
+                                <View style={styles.macroMini}>
+                                    <SunDim size={30} color="#f4d58b" />
+                                    <Text style={styles.macroMiniLabel}>Vitamin D</Text>
+                                    <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fiber} UI</Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
 
@@ -262,85 +320,47 @@ const styles = StyleSheet.create({
         color: '#2E7D32',
         marginBottom: 24,
     },
-    scanButtons: {
+    scanButtonsRow: {
         flexDirection: 'row',
-        gap: 16,
-        marginBottom: 24,
+        marginHorizontal: 20,
+        marginBottom: 20,
+        gap: 27,
     },
     scanButton: {
         flex: 1,
-        borderRadius: 24,
-        paddingVertical: 20,
-        paddingHorizontal: 16,
+        borderRadius: 35,
+        overflow: 'hidden',
+        shadowColor: '#4CAF50',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+        elevation: 6,
+        alignItems: 'flex-start',
+    },
+    scanGradient: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 12,
-        elevation: 6,
-    },
-    scanButtonFood: {
-        backgroundColor: '#2E7D32',
-    },
-    scanButtonFace: {
-        backgroundColor: '#1565C0',
+        paddingVertical: 18,
+        paddingHorizontal: 12,
+        gap: 8,
     },
     scanButtonText: {
-        fontSize: 16,
-        fontWeight: '700' as const,
         color: '#FFFFFF',
-        lineHeight: 20,
-    },
-    healthScoreCard: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 20,
-        padding: 20,
-        marginBottom: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
-    },
-    healthScoreLabel: {
-        fontSize: 16,
-        fontWeight: '600' as const,
-        color: '#6B7280',
-        marginBottom: 12,
-    },
-    scoreRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16,
-    },
-    healthScoreNumber: {
-        fontSize: 48,
-        fontWeight: '900' as const,
-        color: '#1B5E20',
-    },
-    scoreProgressBar: {
-        flex: 1,
-        height: 12,
-        backgroundColor: '#F3F4F6',
-        borderRadius: 6,
-        overflow: 'hidden',
-    },
-    scoreProgressFill: {
-        height: '100%',
-        borderRadius: 6,
+        fontSize: 20,
+        marginLeft: 20,
+        marginRight: 10,
+        fontWeight: '700' as const,
     },
     nutritionCard: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 24,
+        borderRadius: 55,
         padding: 20,
         marginBottom: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
-        shadowRadius: 12,
+        shadowRadius: 16,
         elevation: 4,
     },
     nutritionItem: {
@@ -350,17 +370,19 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
     },
     nutritionIconCircle: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
         alignItems: 'center',
         justifyContent: 'center',
+        marginRight: 10,
+        marginLeft: 10,
     },
     nutritionTextContainer: {
         flex: 1,
     },
     nutritionLabel: {
-        fontSize: 13,
+        fontSize: 14,
         color: '#6B7280',
         marginBottom: 2,
         fontWeight: '500' as const,
@@ -371,7 +393,7 @@ const styles = StyleSheet.create({
         color: '#1F2937',
     },
     nutritionGoal: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#9CA3AF',
         marginTop: -2,
     },
@@ -393,18 +415,26 @@ const styles = StyleSheet.create({
         marginTop: 8,
         gap: 8,
     },
+    circularProgress: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#F5F5F5',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     macroMini: {
         flex: 1,
         alignItems: 'center',
         gap: 6,
     },
     macroMiniLabel: {
-        fontSize: 11,
+        fontSize: 14,
         color: '#6B7280',
         fontWeight: '500' as const,
     },
     macroMiniValue: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: '700' as const,
         color: '#1F2937',
     },
@@ -490,7 +520,7 @@ const styles = StyleSheet.create({
     faceAnalysisIcon: {
         width: 44,
         height: 44,
-        borderRadius: 12,
+        borderRadius: 22,
         backgroundColor: '#D1FAE5',
         alignItems: 'center',
         justifyContent: 'center',
@@ -510,7 +540,7 @@ const styles = StyleSheet.create({
     },
     moodCard: {
         backgroundColor: '#D1FAE5',
-        borderRadius: 20,
+        borderRadius: 50,
         padding: 24,
         flexDirection: 'row',
         alignItems: 'center',

@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     },
     foodCard: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 20,
+        borderRadius: 35,
         padding: 16,
         flexDirection: 'row',
         alignItems: 'center',
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     foodIcon: {
         width: 48,
         height: 48,
-        borderRadius: 14,
+        borderRadius: 24,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     },
     statsCard: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 20,
+        borderRadius: 40,
         padding: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         paddingHorizontal: 16,
         paddingVertical: 8,
-        borderRadius: 12,
+        borderRadius: 22,
         marginBottom: 16,
     },
     healthBadgeText: {
