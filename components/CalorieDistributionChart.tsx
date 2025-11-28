@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Path, G, Text as SvgText } from 'react-native-svg';
+import Svg, { Path, G, Text as SvgText, Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { Flame } from 'lucide-react-native'; // Assuming you have lucide icons installed
 
 const { width } = Dimensions.get('window');
-// Slightly larger chart area
 const CHART_SIZE = width * 0.5;
-// Much thicker stroke for the "beautiful shape"
 const STROKE_WIDTH = 38;
 const RADIUS = (CHART_SIZE - STROKE_WIDTH) / 2;
 const CENTER = CHART_SIZE / 2;
+const INNER_CIRCLE_RADIUS = RADIUS - (STROKE_WIDTH / 2) + 10; // Radius for the white center circle
 
 interface Props {
     nutrition: {
@@ -21,7 +21,7 @@ interface Props {
     };
 }
 
-// --- Helper Functions for SVG Pie ---
+// --- Helper Functions for SVG Pie (unchanged) ---
 const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
     const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
     return {
@@ -64,22 +64,25 @@ export default function CalorieDistributionChart({ nutrition }: Props) {
                 label: 'Carbs',
                 grams: nutrition.carbs,
                 cals: carbCals,
-                // Lighter, more vibrant Gold
-                color: '#FCD34D',
+                // Vibrant Gold
+                color: '#FFC107',
+                gradientId: 'gradCarbs',
             },
             {
                 label: 'Protein',
                 grams: nutrition.protein,
                 cals: proteinCals,
-                // Lighter, vibrant Sky Blue
-                color: '#60A5FA',
+                // Vibrant Sky Blue
+                color: '#2196F3',
+                gradientId: 'gradProtein',
             },
             {
                 label: 'Fats',
                 grams: nutrition.fats,
                 cals: fatsCals,
-                // Vibrant Pink/Magenta
-                color: '#F472B6',
+                // Vibrant Pink
+                color: '#E91E63',
+                gradientId: 'gradFats',
             },
         ];
 
@@ -102,42 +105,94 @@ export default function CalorieDistributionChart({ nutrition }: Props) {
     if (nutrition.calories === 0) return null;
 
     return (
-        // Container is now transparent (no bg, shadow, padding)
+        // Added styling for the outer container to apply subtle shadow
         <View style={styles.container}>
 
             <View style={styles.chartContainer}>
                 <Svg width={CHART_SIZE} height={CHART_SIZE}>
+                    <Defs>
+                        {/* Define Radial Gradients for each segment to give it depth */}
+                        {chartData.map((item) => (
+                            <RadialGradient
+                                key={item.gradientId}
+                                id={item.gradientId}
+                                cx="50%" cy="50%" r="50%" fx="50%" fy="50%"
+                            >
+                                {/* Darker color near the center/edge */}
+                                <Stop offset="0%" stopColor={item.color} stopOpacity="0.8" />
+                                {/* Lighter color in the middle */}
+                                <Stop offset="100%" stopColor={item.color} stopOpacity="1" />
+                            </RadialGradient>
+                        ))}
+                    </Defs>
+
+                    {/* The Donut Segments */}
                     <G>
-                        {chartData.map((item, index) => (
+                        {chartData.map((item) => (
                             <Path
                                 key={item.label}
                                 d={item.path}
-                                stroke={item.color}
+                                // Use the defined gradient ID as the stroke
+                                stroke={`url(#${item.gradientId})`}
                                 strokeWidth={STROKE_WIDTH}
                                 fill="none"
-                                // Butt caps for clean meeting points without white separators
                                 strokeLinecap="butt"
+                                // Optional: Add filter for a stronger shadow effect (may not work in all environments)
+                                // filter="url(#drop-shadow)"
                             />
                         ))}
 
-                        {/* Center Text - Darker for contrast on light background */}
+                        {/* White Center Circle */}
+                        <Circle
+                            cx={CENTER}
+                            cy={CENTER}
+                            r={INNER_CIRCLE_RADIUS}
+                            fill="#FFFFFF"
+                            // Apply subtle shadow to the center circle
+                            style={{ elevation: 5 }}
+                        />
+
+                        {/* Center Flame Icon */}
                         <SvgText
                             x={CENTER}
-                            y={CENTER - 12}
+                            y={CENTER - 20}
                             textAnchor="middle"
-                            fontWeight="800"
-                            fontSize="32"
-                            fill="#1B5E20" // Dark Green to match header vibe
+                        >
+                            <Flame size={24} color="#FF9800" fill="#FF9800" />
+                        </SvgText>
+
+                        {/* Calories Value */}
+                        <SvgText
+                            x={CENTER}
+                            y={CENTER - 15}
+                            textAnchor="middle"
+                            fontWeight="900"
+                            fontSize="36"
+                            fill="#1c771f"
                         >
                             {nutrition.calories}
                         </SvgText>
+
+                        {/* Calories Value */}
                         <SvgText
                             x={CENTER}
-                            y={CENTER + 18}
+                            y={CENTER + 10}
                             textAnchor="middle"
                             fontWeight="600"
-                            fontSize="15"
-                            fill="#2E7D32" // Medium Green
+                            fontSize="20"
+                            fill="#9CA3AF"
+                        >
+                            /2000
+                        </SvgText>
+
+                        {/* Calories Label */}
+                        <SvgText
+                            x={CENTER}
+                            y={CENTER + 38}
+                            textAnchor="middle"
+                            fontWeight="700"
+                            fontSize="18"
+                            fill="#dd3e6e"
                         >
                             Calories
                         </SvgText>
@@ -145,6 +200,7 @@ export default function CalorieDistributionChart({ nutrition }: Props) {
                 </Svg>
             </View>
 
+            {/* Right Side: The Legend */}
             <View style={styles.legendContainer}>
                 {chartData.map((item) => (
                     <View key={item.label} style={styles.legendItem}>
@@ -168,9 +224,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        // Removed background, padding, shadow, borderRadius
         marginBottom: 24,
         marginTop: 8,
+        // Overall component shadow for a floating effect
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 3,
     },
     chartContainer: {
         alignItems: 'center',
@@ -193,10 +254,15 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         marginTop: 5,
         marginRight: 12,
+        // Subtle shadow on dots to match overall vibe
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
     },
     legendLabel: {
         fontSize: 14,
-        color: '#4B5563', // Slightly darker gray for better contrast against green bg
+        color: '#4B5563',
         fontWeight: '600',
         marginBottom: 2,
     },
@@ -207,11 +273,11 @@ const styles = StyleSheet.create({
     legendGrams: {
         fontSize: 18,
         fontWeight: '800',
-        color: '#1B5E20', // Dark green for values
+        color: '#1F2937', // Dark for emphasis
     },
     legendPercentage: {
         fontSize: 15,
         fontWeight: '600',
-        color: '#2E7D32', // Medium green for percentage
+        color: '#6B7280', // Medium gray for percentage
     }
 });

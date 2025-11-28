@@ -43,7 +43,7 @@ export default function TodayScreen() {
                             activeOpacity={0.85}
                         >
                             <LinearGradient
-                                colors={['#4CAF50', '#45A049'] as const}
+                                colors={['#4CAF50', '#1c771f'] as const}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                                 style={styles.scanGradient}
@@ -59,7 +59,7 @@ export default function TodayScreen() {
                             activeOpacity={0.85}
                         >
                             <LinearGradient
-                                colors={['#2196F3', '#1976D2'] as const}
+                                colors={['#2196F3', '#014f9e'] as const}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                                 style={styles.scanGradient}
