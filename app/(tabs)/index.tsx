@@ -6,12 +6,44 @@ import { useHealth } from "@/contexts/HealthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CalorieDistributionChart from "@/components/CalorieDistributionChart";
 
+// NOTE: The CardWithBubbleBackground component is removed as requested.
+
 export default function TodayScreen() {
     const router = useRouter();
     const { dailyStats } = useHealth();
     const insets = useSafeAreaInsets();
 
     const healthScoreColor = dailyStats.healthScore >= 70 ? '#10B981' : dailyStats.healthScore >= 40 ? '#F59E0B' : '#EF4444';
+
+    // --- Dynamic Calorie Calculation Function ---
+    const calculateKcal = () => {
+        const { protein, carbs, fats } = dailyStats.nutrition;
+
+        // Standard Atwater Factors:
+        // Protein: 4 kcal/g, Carbs: 4 kcal/g, Fats: 9 kcal/g
+
+        const proteinKcal = protein * 4;
+        const carbKcal = carbs * 4;
+        const fatKcal = fats * 9;
+
+        const totalKcal = Math.round(proteinKcal + carbKcal + fatKcal);
+
+        return totalKcal;
+    };
+
+    // Helper function to format the Calorie display (kcal)
+    const renderKcalValue = () => {
+        return `${calculateKcal()} kcal`;
+    };
+
+    // --- NEW: Component for Bubble Decoration (used in circularProgress) ---
+    const BubbleDecoration = ({ isHalf }: { isHalf: boolean }) => (
+        <View style={styles.bubbleContainer}>
+            <View style={[styles.bubbleDecorator, isHalf ? styles.halfBubble : styles.fullBubble]} />
+            {isHalf && <View style={[styles.bubbleDecorator, styles.smallFullBubble]} />}
+        </View>
+    );
+    // ---------------------------------------------
 
     return (
         <View style={styles.container}>
@@ -21,6 +53,7 @@ export default function TodayScreen() {
                 end={{ x: 0, y: 1 }}
                 style={styles.background}
             >
+                {/* Existing background bubbles */}
                 <View style={[styles.bubble1, { top: insets.top + 40 }]} />
                 <View style={styles.bubble2} />
                 <View style={styles.bubble3} />
@@ -70,6 +103,7 @@ export default function TodayScreen() {
                         </TouchableOpacity>
                     </View>
 
+                    {/* Calorie/Macro Card - Now a standard View with bubble card styles */}
                     <View style={styles.nutritionCard}>
                         <View style={styles.nutritionItem}>
                             <View style={[styles.nutritionIconCircle, { backgroundColor: '#FFEBE5' }]}>
@@ -77,13 +111,15 @@ export default function TodayScreen() {
                             </View>
                             <View style={styles.nutritionTextContainer}>
                                 <Text style={styles.nutritionLabel}>Calories</Text>
-                                <Text style={styles.nutritionValue}>{dailyStats.nutrition.calories}</Text>
+                                <Text style={styles.nutritionValue}>{calculateKcal()}</Text>
                                 <Text style={styles.nutritionGoal}>/ 2000</Text>
                             </View>
                             <View style={styles.circularProgress}>
-                            <Text style={styles.nutritionPercentage}>
-                                {Math.round((dailyStats.nutrition.calories / 2000) * 100)}%
-                            </Text>
+                                {/* Bubble decoration for Calories (Full Bubble) */}
+                                <BubbleDecoration isHalf={false} />
+                                <Text style={styles.kcalPercentageText}>
+                                    {renderKcalValue()}
+                                </Text>
                             </View>
                         </View>
 
@@ -99,9 +135,11 @@ export default function TodayScreen() {
                                 <Text style={styles.nutritionGoal}>/ 50g</Text>
                             </View>
                             <View style={styles.circularProgress}>
-                            <Text style={styles.nutritionPercentage}>
-                                {Math.round((dailyStats.nutrition.protein / 50) * 100)}%
-                            </Text>
+                                {/* Bubble decoration for Protein (Half Bubble) */}
+                                <BubbleDecoration isHalf={true} />
+                                <Text style={styles.kcalPercentageText}>
+                                    {`${Math.round(dailyStats.nutrition.protein * 4)} kcal`}
+                                </Text>
                             </View>
                         </View>
 
@@ -117,9 +155,11 @@ export default function TodayScreen() {
                                 <Text style={styles.nutritionGoal}>/ 50g</Text>
                             </View>
                             <View style={styles.circularProgress}>
-                            <Text style={styles.nutritionPercentage}>
-                                {Math.round((dailyStats.nutrition.sugar / 50) * 100)}%
-                            </Text>
+                                {/* Bubble decoration for Sugar (Full Bubble) */}
+                                <BubbleDecoration isHalf={false} />
+                                <Text style={styles.kcalPercentageText}>
+                                    {`${Math.round(dailyStats.nutrition.sugar * 4)} kcal`}
+                                </Text>
                             </View>
                         </View>
 
@@ -143,10 +183,12 @@ export default function TodayScreen() {
                             </View>
                         </View>
                     </View>
+                    {/* End Calorie/Macro Card */}
 
                     <View style={styles.vitaminsSection}>
                         <Text style={styles.sectionTitle}>Vitamins & Minerals</Text>
 
+                        {/* Vitamins/Minerals Card - Now a standard View with bubble card styles */}
                         <View style={styles.nutritionCard}>
                             <View style={styles.nutritionItem}>
                                 <View style={[styles.nutritionIconCircle, { backgroundColor: '#dfeef1' }]}>
@@ -157,10 +199,10 @@ export default function TodayScreen() {
                                     <Text style={styles.nutritionValue}>{dailyStats.nutrition.calories}</Text>
                                     <Text style={styles.nutritionGoal}>/ 1180 mg</Text>
                                 </View>
+                                {/* Removed Kcal display */}
                                 <View style={styles.circularProgress}>
-                                    <Text style={styles.nutritionPercentage}>
-                                        {Math.round((dailyStats.nutrition.calories / 2000) * 100)}%
-                                    </Text>
+                                    <BubbleDecoration isHalf={true} />
+                                    <Text style={styles.mgText}>mg</Text>
                                 </View>
                             </View>
 
@@ -175,10 +217,10 @@ export default function TodayScreen() {
                                     <Text style={styles.nutritionValue}>{dailyStats.nutrition.protein}g</Text>
                                     <Text style={styles.nutritionGoal}>/ 450 mg</Text>
                                 </View>
+                                {/* Removed Kcal display */}
                                 <View style={styles.circularProgress}>
-                                    <Text style={styles.nutritionPercentage}>
-                                        {Math.round((dailyStats.nutrition.protein / 50) * 100)}%
-                                    </Text>
+                                    <BubbleDecoration isHalf={false} />
+                                    <Text style={styles.mgText}>mg</Text>
                                 </View>
                             </View>
 
@@ -193,10 +235,10 @@ export default function TodayScreen() {
                                     <Text style={styles.nutritionValue}>{dailyStats.nutrition.sugar}g</Text>
                                     <Text style={styles.nutritionGoal}>/ 3970 mg</Text>
                                 </View>
+                                {/* Removed Kcal display */}
                                 <View style={styles.circularProgress}>
-                                    <Text style={styles.nutritionPercentage}>
-                                        {Math.round((dailyStats.nutrition.sugar / 50) * 100)}%
-                                    </Text>
+                                    <BubbleDecoration isHalf={true} />
+                                    <Text style={styles.mgText}>mg</Text>
                                 </View>
                             </View>
 
@@ -220,6 +262,7 @@ export default function TodayScreen() {
                                 </View>
                             </View>
                         </View>
+                        {/* End Vitamins/Minerals Card */}
                     </View>
 
                     {dailyStats.faceAnalysis && (
@@ -352,6 +395,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         fontWeight: '700' as const,
     },
+    // --- Card Styles (Re-used for both main cards) ---
     nutritionCard: {
         backgroundColor: '#FFFFFF',
         borderRadius: 55,
@@ -363,6 +407,38 @@ const styles = StyleSheet.create({
         shadowRadius: 16,
         elevation: 4,
     },
+    // --- Bubble Decoration Styles (NEW) ---
+    bubbleContainer: {
+        ...StyleSheet.absoluteFillObject,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        borderRadius: 28, // Match circularProgress
+    },
+    bubbleDecorator: {
+        position: 'absolute',
+        backgroundColor: 'rgba(165, 214, 167, 0.4)', // Light green color
+    },
+    fullBubble: {
+        width: 65,
+        height: 65,
+        borderRadius: 32.5,
+        right: -10,
+    },
+    halfBubble: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        right: -40,
+    },
+    smallFullBubble: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        right: 15,
+        top: 10,
+    },
+    // --- End Bubble Decoration Styles ---
     nutritionItem: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -397,10 +473,28 @@ const styles = StyleSheet.create({
         color: '#9CA3AF',
         marginTop: -2,
     },
-    nutritionPercentage: {
-        fontSize: 18,
+    circularProgress: {
+        width: 90, // Increased width slightly to accommodate decorations
+        height: 56,
+        borderRadius: 28,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative', // Needed for absolute positioning of BubbleDecoration
+    },
+    // Style for the kcal text (z-index ensures it sits above the bubbles)
+    kcalPercentageText: {
+        fontSize: 14,
+        fontWeight: '700' as const,
+        color: '#1F2937',
+        textAlign: 'center',
+        zIndex: 2,
+    },
+    mgText: {
+        fontSize: 14,
         fontWeight: '700' as const,
         color: '#6B7280',
+        textAlign: 'center',
+        zIndex: 2,
     },
     divider: {
         height: 1,
@@ -414,14 +508,6 @@ const styles = StyleSheet.create({
         borderTopColor: '#F3F4F6',
         marginTop: 8,
         gap: 8,
-    },
-    circularProgress: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: '#F5F5F5',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     macroMini: {
         flex: 1,
@@ -446,16 +532,6 @@ const styles = StyleSheet.create({
         fontWeight: '700' as const,
         color: '#1B5E20',
         marginBottom: 16,
-    },
-    vitaminsCard: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 24,
-        padding: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 3,
     },
     vitaminRow: {
         flexDirection: 'row',
