@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { User, Beef, Flame, Drumstick, Wheat, Apple, Bone, Pill, EggFried, Croissant, Milk, Banana, SunDim } from "lucide-react-native";
+import { User, Beef, Flame, Drumstick, Wheat, Apple, Bone, Pill, EggFried, Croissant, Milk, Banana, Fish } from "lucide-react-native";
 import { useHealth } from "@/contexts/HealthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CalorieDistributionChart from "@/components/CalorieDistributionChart";
+import {isReasoningUIPart} from "ai";
 
 export default function TodayScreen() {
     const router = useRouter();
@@ -14,6 +15,9 @@ export default function TodayScreen() {
     // --- Daily Goals (Placeholders - must be updated for production) ---
     const goals = {
         calcium: 1180, // mg
+        vitamind: 24, // UI
+        iron: 250, // mg
+        zinc: 90, // mg
         magnesium: 450, // mg
         potassium: 3970, // mg
     };
@@ -57,10 +61,16 @@ export default function TodayScreen() {
     // Placeholder values for Vitamins/Minerals based on existing fields
     // NOTE: These variables are used to simulate real nutrient data and map to goals.
     const calciumValue = dailyStats.nutrition.calories; // Using calories field as a placeholder for mg
+    const vitaminDValue = 24; // Using calories field as a placeholder for mg
+    const ironValue = 224; // Using calories field as a placeholder for mg
+    const zincValue= 79; // Using calories field as a placeholder for mg
     const magnesiumValue = dailyStats.nutrition.protein; // Using protein field as a placeholder for mg
     const potassiumValue = dailyStats.nutrition.sugar; // Using sugar field as a placeholder for mg
 
     const calciumStatus = getStatus(calciumValue, goals.calcium);
+    const vitaminDStatus = getStatus(vitaminDValue, goals.vitamind);
+    const ironStatus = getStatus(ironValue, goals.iron);
+    const zincStatus = getStatus(zincValue, goals.zinc);
     const magnesiumStatus = getStatus(magnesiumValue, goals.magnesium);
     const potassiumStatus = getStatus(potassiumValue, goals.potassium);
 
@@ -164,6 +174,63 @@ export default function TodayScreen() {
                         <View style={styles.divider} />
 
                         <View style={styles.nutritionItem}>
+                            <View style={[styles.nutritionIconCircle, { backgroundColor: '#fdfbc3' }]}>
+                                <Wheat size={30} color="#EAB308" />
+                            </View>
+                            <View style={styles.nutritionTextContainer}>
+                                <Text style={styles.nutritionLabel}>Carbs</Text>
+                                <Text style={styles.nutritionValue}>{dailyStats.nutrition.carbs}g</Text>
+                                <Text style={styles.nutritionGoal}>/ 250g</Text>
+                            </View>
+                            <View style={styles.circularProgress}>
+                                <BubbleDecoration isHalf={false} />
+                                <Text style={styles.kcalPercentageText}>
+                                    {`${Math.round(dailyStats.nutrition.carbs * 4)} kcal`}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.nutritionItem}>
+                            <View style={[styles.nutritionIconCircle, { backgroundColor: 'rgba(255,230,229,0.91)' }]}>
+                                <Beef size={30} color="#dd3e6e" />
+                            </View>
+                            <View style={styles.nutritionTextContainer}>
+                                <Text style={styles.nutritionLabel}>Fats</Text>
+                                <Text style={styles.nutritionValue}>{dailyStats.nutrition.fats}g</Text>
+                                <Text style={styles.nutritionGoal}>/ 100g</Text>
+                            </View>
+                            <View style={styles.circularProgress}>
+                                <BubbleDecoration isHalf={false} />
+                                <Text style={styles.kcalPercentageText}>
+                                    {`${Math.round(dailyStats.nutrition.fats * 4)} kcal`}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.nutritionItem}>
+                            <View style={[styles.nutritionIconCircle, { backgroundColor: '#dafbdd' }]}>
+                                <Apple size={30} color="#16A34A" />
+                            </View>
+                            <View style={styles.nutritionTextContainer}>
+                                <Text style={styles.nutritionLabel}>Fiber</Text>
+                                <Text style={styles.nutritionValue}>{dailyStats.nutrition.fiber}g</Text>
+                                <Text style={styles.nutritionGoal}>/ 30g</Text>
+                            </View>
+                            <View style={styles.circularProgress}>
+                                <BubbleDecoration isHalf={true} />
+                                <Text style={styles.kcalPercentageText}>
+                                    {`${Math.round(dailyStats.nutrition.fiber * 4)} kcal`}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.nutritionItem}>
                             <View style={[styles.nutritionIconCircle, { backgroundColor: '#fdebf8' }]}>
                                 <Croissant size={30} color="#c3419a" />
                             </View>
@@ -177,26 +244,6 @@ export default function TodayScreen() {
                                 <Text style={styles.kcalPercentageText}>
                                     {`${Math.round(dailyStats.nutrition.sugar * 4)} kcal`}
                                 </Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.divider} />
-
-                        <View style={styles.nutritionRow}>
-                            <View style={styles.macroMini}>
-                                <Wheat size={24} color="#EAB308" />
-                                <Text style={styles.macroMiniLabel}>Carbs</Text>
-                                <Text style={styles.macroMiniValue}>{dailyStats.nutrition.carbs}g</Text>
-                            </View>
-                            <View style={styles.macroMini}>
-                                <Beef size={24} color="#dd3e6e" />
-                                <Text style={styles.macroMiniLabel}>Fats</Text>
-                                <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fats}g</Text>
-                            </View>
-                            <View style={styles.macroMini}>
-                                <Apple size={24} color="#16A34A" />
-                                <Text style={styles.macroMiniLabel}>Fiber</Text>
-                                <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fiber}g</Text>
                             </View>
                         </View>
                     </View>
@@ -214,7 +261,7 @@ export default function TodayScreen() {
                                 <View style={styles.nutritionTextContainer}>
                                     <Text style={styles.nutritionLabel}>Calcium</Text>
                                     {/* Displaying the placeholder value */}
-                                    <Text style={styles.nutritionValue}>{calciumValue}</Text>
+                                    <Text style={styles.nutritionValue}>{calciumValue} mg</Text>
                                     <Text style={styles.nutritionGoal}>/ {goals.calcium} mg</Text>
                                 </View>
                                 <View style={styles.circularProgress}>
@@ -222,6 +269,69 @@ export default function TodayScreen() {
                                     {/* NEW: Display Status */}
                                     <Text style={[styles.statusText, { color: calciumStatus.color }]}>
                                         {calciumStatus.status}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.divider} />
+
+                            <View style={styles.nutritionItem}>
+                                <View style={[styles.nutritionIconCircle, { backgroundColor: '#cceffa' }]}>
+                                    <Milk size={30} color="#31bfea" />
+                                </View>
+                                <View style={styles.nutritionTextContainer}>
+                                    <Text style={styles.nutritionLabel}>Zinc</Text>
+                                    {/* Displaying the placeholder value */}
+                                    <Text style={styles.nutritionValue}>{zincValue}</Text>
+                                    <Text style={styles.nutritionGoal}>/ {goals.zinc} mg</Text>
+                                </View>
+                                <View style={styles.circularProgress}>
+                                    <BubbleDecoration isHalf={true} />
+                                    {/* NEW: Display Status */}
+                                    <Text style={[styles.statusText, { color: zincStatus.color }]}>
+                                        {zincStatus.status}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.divider} />
+
+                            <View style={styles.nutritionItem}>
+                                <View style={[styles.nutritionIconCircle, { backgroundColor: '#fae2f6' }]}>
+                                    <Fish size={30} color="#cd44b7" />
+                                </View>
+                                <View style={styles.nutritionTextContainer}>
+                                    <Text style={styles.nutritionLabel}>Vitamin D</Text>
+                                    {/* Displaying the placeholder value */}
+                                    <Text style={styles.nutritionValue}>{vitaminDValue} UI</Text>
+                                    <Text style={styles.nutritionGoal}>/ {goals.vitamind} UI</Text>
+                                </View>
+                                <View style={styles.circularProgress}>
+                                    <BubbleDecoration isHalf={false} />
+                                    {/* NEW: Display Status */}
+                                    <Text style={[styles.statusText, { color: vitaminDStatus.color }]}>
+                                        {vitaminDStatus.status}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.divider} />
+
+                            <View style={styles.nutritionItem}>
+                                <View style={[styles.nutritionIconCircle, { backgroundColor: '#fbf5e1' }]}>
+                                    <EggFried size={30} color="#EAB308" />
+                                </View>
+                                <View style={styles.nutritionTextContainer}>
+                                    <Text style={styles.nutritionLabel}>Iron</Text>
+                                    {/* Displaying the placeholder value */}
+                                    <Text style={styles.nutritionValue}>{ironValue}</Text>
+                                    <Text style={styles.nutritionGoal}>/ {goals.iron} mg</Text>
+                                </View>
+                                <View style={styles.circularProgress}>
+                                    <BubbleDecoration isHalf={true} />
+                                    {/* NEW: Display Status */}
+                                    <Text style={[styles.statusText, { color: ironStatus.color }]}>
+                                        {ironStatus.status}
                                     </Text>
                                 </View>
                             </View>
@@ -265,26 +375,6 @@ export default function TodayScreen() {
                                     <Text style={[styles.statusText, { color: potassiumStatus.color }]}>
                                         {potassiumStatus.status}
                                     </Text>
-                                </View>
-                            </View>
-
-                            <View style={styles.divider} />
-
-                            <View style={styles.nutritionRow}>
-                                <View style={styles.macroMini}>
-                                    <EggFried size={24} color="#EAB308" />
-                                    <Text style={styles.macroMiniLabel}>Iron</Text>
-                                    <Text style={styles.macroMiniValue}>{dailyStats.nutrition.carbs} mg</Text>
-                                </View>
-                                <View style={styles.macroMini}>
-                                    <Milk size={24} color="#31bfea" />
-                                    <Text style={styles.macroMiniLabel}>Zinc</Text>
-                                    <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fats} mg</Text>
-                                </View>
-                                <View style={styles.macroMini}>
-                                    <SunDim size={30} color="#f4d58b" />
-                                    <Text style={styles.macroMiniLabel}>Vitamin D</Text>
-                                    <Text style={styles.macroMiniValue}>{dailyStats.nutrition.fiber} UI</Text>
                                 </View>
                             </View>
                         </View>

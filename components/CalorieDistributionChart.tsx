@@ -6,7 +6,7 @@ import { Flame } from 'lucide-react-native';
 const { width } = Dimensions.get('window');
 const CHART_CONTAINER_WIDTH = width * 0.9; // The effective width for the content (chart + legend)
 const CHART_SIZE = CHART_CONTAINER_WIDTH * 0.45; // Actual SVG chart size
-const STROKE_WIDTH = 30;
+const STROKE_WIDTH = 26;
 const RADIUS = (CHART_SIZE - STROKE_WIDTH) / 2;
 const SVG_CENTER_X = CHART_SIZE / 2;
 const SVG_CENTER_Y = CHART_SIZE / 2;
