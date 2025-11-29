@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Activity, BarChart3, Clock } from "lucide-react-native";
+import { Activity, BarChart3, Apple } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -53,17 +53,17 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
+                name="history"
+                options={{
+                    title: "Foods",
+                    tabBarIcon: ({ color, size }) => <Apple color={color} size={size} />,
+                }}
+            />
+            <Tabs.Screen
                 name="weekly"
                 options={{
                     title: "Weekly Stats",
                     tabBarIcon: ({ color, size }) => <BarChart3 color={color} size={size} />,
-                }}
-            />
-            <Tabs.Screen
-                name="history"
-                options={{
-                    title: "History",
-                    tabBarIcon: ({ color, size }) => <Clock color={color} size={size} />,
                 }}
             />
         </Tabs>

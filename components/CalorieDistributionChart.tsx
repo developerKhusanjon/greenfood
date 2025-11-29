@@ -213,7 +213,7 @@ export default function CalorieDistributionChart({ nutrition, calorieGoal = 2000
                                 y={SVG_CENTER_Y + 18}
                                 textAnchor="middle"
                                 fontWeight="500"
-                                fontSize="18"
+                                fontSize="15"
                                 fill="#9CA3AF"
                             >
                                 / 2000

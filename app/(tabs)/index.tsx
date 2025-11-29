@@ -1,42 +1,51 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Scan, User, Beef, Flame, Drumstick, Wheat, Apple, Bone, Pill, EggFried, Croissant, Milk, Banana, SunDim } from "lucide-react-native";
+import { User, Beef, Flame, Drumstick, Wheat, Apple, Bone, Pill, EggFried, Croissant, Milk, Banana, SunDim } from "lucide-react-native";
 import { useHealth } from "@/contexts/HealthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CalorieDistributionChart from "@/components/CalorieDistributionChart";
-
-// NOTE: The CardWithBubbleBackground component is removed as requested.
 
 export default function TodayScreen() {
     const router = useRouter();
     const { dailyStats } = useHealth();
     const insets = useSafeAreaInsets();
 
-    const healthScoreColor = dailyStats.healthScore >= 70 ? '#10B981' : dailyStats.healthScore >= 40 ? '#F59E0B' : '#EF4444';
+    // --- Daily Goals (Placeholders - must be updated for production) ---
+    const goals = {
+        calcium: 1180, // mg
+        magnesium: 450, // mg
+        potassium: 3970, // mg
+    };
 
-    // --- Dynamic Calorie Calculation Function ---
+    // --- Dynamic Calorie Calculation Function (Unchanged) ---
     const calculateKcal = () => {
         const { protein, carbs, fats } = dailyStats.nutrition;
-
-        // Standard Atwater Factors:
-        // Protein: 4 kcal/g, Carbs: 4 kcal/g, Fats: 9 kcal/g
-
         const proteinKcal = protein * 4;
         const carbKcal = carbs * 4;
         const fatKcal = fats * 9;
-
         const totalKcal = Math.round(proteinKcal + carbKcal + fatKcal);
-
         return totalKcal;
     };
 
-    // Helper function to format the Calorie display (kcal)
     const renderKcalValue = () => {
         return `${calculateKcal()} kcal`;
     };
 
-    // --- NEW: Component for Bubble Decoration (used in circularProgress) ---
+    // --- NEW: Status Calculation Function for Vitamins/Minerals ---
+    const getStatus = (currentValue: number, goal: number): { status: string, color: string } => {
+        const ratio = currentValue / goal;
+
+        if (ratio >= 1.5) {
+            return { status: 'More', color: '#EF4444' }; // Red: Much more
+        } else if (ratio >= 0.8) {
+            return { status: 'Enough', color: '#10B981' }; // Green: Enough (80% or more)
+        } else {
+            return { status: 'Less', color: '#F59E0B' }; // Orange: Less than 80%
+        }
+    };
+
+    // --- Component for Bubble Decoration (used in circularProgress) (Unchanged) ---
     const BubbleDecoration = ({ isHalf }: { isHalf: boolean }) => (
         <View style={styles.bubbleContainer}>
             <View style={[styles.bubbleDecorator, isHalf ? styles.halfBubble : styles.fullBubble]} />
@@ -44,6 +53,17 @@ export default function TodayScreen() {
         </View>
     );
     // ---------------------------------------------
+
+    // Placeholder values for Vitamins/Minerals based on existing fields
+    // NOTE: These variables are used to simulate real nutrient data and map to goals.
+    const calciumValue = dailyStats.nutrition.calories; // Using calories field as a placeholder for mg
+    const magnesiumValue = dailyStats.nutrition.protein; // Using protein field as a placeholder for mg
+    const potassiumValue = dailyStats.nutrition.sugar; // Using sugar field as a placeholder for mg
+
+    const calciumStatus = getStatus(calciumValue, goals.calcium);
+    const magnesiumStatus = getStatus(magnesiumValue, goals.magnesium);
+    const potassiumStatus = getStatus(potassiumValue, goals.potassium);
+
 
     return (
         <View style={styles.container}>
@@ -81,7 +101,7 @@ export default function TodayScreen() {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.scanGradient}
                             >
-                                <Scan size={30} color="#FFFFFF" strokeWidth={2.5} />
+                                <Croissant size={30} color="#FFFFFF" strokeWidth={2.5} />
                                 <Text style={styles.scanButtonText}>Scan{"\n"}Food</Text>
                             </LinearGradient>
                         </TouchableOpacity>
@@ -103,7 +123,7 @@ export default function TodayScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Calorie/Macro Card - Now a standard View with bubble card styles */}
+                    {/* Calorie/Macro Card */}
                     <View style={styles.nutritionCard}>
                         <View style={styles.nutritionItem}>
                             <View style={[styles.nutritionIconCircle, { backgroundColor: '#FFEBE5' }]}>
@@ -115,7 +135,6 @@ export default function TodayScreen() {
                                 <Text style={styles.nutritionGoal}>/ 2000</Text>
                             </View>
                             <View style={styles.circularProgress}>
-                                {/* Bubble decoration for Calories (Full Bubble) */}
                                 <BubbleDecoration isHalf={false} />
                                 <Text style={styles.kcalPercentageText}>
                                     {renderKcalValue()}
@@ -135,7 +154,6 @@ export default function TodayScreen() {
                                 <Text style={styles.nutritionGoal}>/ 50g</Text>
                             </View>
                             <View style={styles.circularProgress}>
-                                {/* Bubble decoration for Protein (Half Bubble) */}
                                 <BubbleDecoration isHalf={true} />
                                 <Text style={styles.kcalPercentageText}>
                                     {`${Math.round(dailyStats.nutrition.protein * 4)} kcal`}
@@ -155,7 +173,6 @@ export default function TodayScreen() {
                                 <Text style={styles.nutritionGoal}>/ 50g</Text>
                             </View>
                             <View style={styles.circularProgress}>
-                                {/* Bubble decoration for Sugar (Full Bubble) */}
                                 <BubbleDecoration isHalf={false} />
                                 <Text style={styles.kcalPercentageText}>
                                     {`${Math.round(dailyStats.nutrition.sugar * 4)} kcal`}
@@ -188,7 +205,7 @@ export default function TodayScreen() {
                     <View style={styles.vitaminsSection}>
                         <Text style={styles.sectionTitle}>Vitamins & Minerals</Text>
 
-                        {/* Vitamins/Minerals Card - Now a standard View with bubble card styles */}
+                        {/* Vitamins/Minerals Card */}
                         <View style={styles.nutritionCard}>
                             <View style={styles.nutritionItem}>
                                 <View style={[styles.nutritionIconCircle, { backgroundColor: '#dfeef1' }]}>
@@ -196,13 +213,16 @@ export default function TodayScreen() {
                                 </View>
                                 <View style={styles.nutritionTextContainer}>
                                     <Text style={styles.nutritionLabel}>Calcium</Text>
-                                    <Text style={styles.nutritionValue}>{dailyStats.nutrition.calories}</Text>
-                                    <Text style={styles.nutritionGoal}>/ 1180 mg</Text>
+                                    {/* Displaying the placeholder value */}
+                                    <Text style={styles.nutritionValue}>{calciumValue}</Text>
+                                    <Text style={styles.nutritionGoal}>/ {goals.calcium} mg</Text>
                                 </View>
-                                {/* Removed Kcal display */}
                                 <View style={styles.circularProgress}>
                                     <BubbleDecoration isHalf={true} />
-                                    <Text style={styles.mgText}>mg</Text>
+                                    {/* NEW: Display Status */}
+                                    <Text style={[styles.statusText, { color: calciumStatus.color }]}>
+                                        {calciumStatus.status}
+                                    </Text>
                                 </View>
                             </View>
 
@@ -214,13 +234,16 @@ export default function TodayScreen() {
                                 </View>
                                 <View style={styles.nutritionTextContainer}>
                                     <Text style={styles.nutritionLabel}>Magnesium</Text>
-                                    <Text style={styles.nutritionValue}>{dailyStats.nutrition.protein}g</Text>
-                                    <Text style={styles.nutritionGoal}>/ 450 mg</Text>
+                                    {/* Displaying the placeholder value */}
+                                    <Text style={styles.nutritionValue}>{magnesiumValue}</Text>
+                                    <Text style={styles.nutritionGoal}>/ {goals.magnesium} mg</Text>
                                 </View>
-                                {/* Removed Kcal display */}
                                 <View style={styles.circularProgress}>
                                     <BubbleDecoration isHalf={false} />
-                                    <Text style={styles.mgText}>mg</Text>
+                                    {/* NEW: Display Status */}
+                                    <Text style={[styles.statusText, { color: magnesiumStatus.color }]}>
+                                        {magnesiumStatus.status}
+                                    </Text>
                                 </View>
                             </View>
 
@@ -232,13 +255,16 @@ export default function TodayScreen() {
                                 </View>
                                 <View style={styles.nutritionTextContainer}>
                                     <Text style={styles.nutritionLabel}>Potassium</Text>
-                                    <Text style={styles.nutritionValue}>{dailyStats.nutrition.sugar}g</Text>
-                                    <Text style={styles.nutritionGoal}>/ 3970 mg</Text>
+                                    {/* Displaying the placeholder value */}
+                                    <Text style={styles.nutritionValue}>{potassiumValue}</Text>
+                                    <Text style={styles.nutritionGoal}>/ {goals.potassium} mg</Text>
                                 </View>
-                                {/* Removed Kcal display */}
                                 <View style={styles.circularProgress}>
                                     <BubbleDecoration isHalf={true} />
-                                    <Text style={styles.mgText}>mg</Text>
+                                    {/* NEW: Display Status */}
+                                    <Text style={[styles.statusText, { color: potassiumStatus.color }]}>
+                                        {potassiumStatus.status}
+                                    </Text>
                                 </View>
                             </View>
 
@@ -407,7 +433,7 @@ const styles = StyleSheet.create({
         shadowRadius: 16,
         elevation: 4,
     },
-    // --- Bubble Decoration Styles (NEW) ---
+    // --- Bubble Decoration Styles ---
     bubbleContainer: {
         ...StyleSheet.absoluteFillObject,
         alignItems: 'flex-end',
@@ -474,14 +500,14 @@ const styles = StyleSheet.create({
         marginTop: -2,
     },
     circularProgress: {
-        width: 90, // Increased width slightly to accommodate decorations
+        width: 90,
         height: 56,
         borderRadius: 28,
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'relative', // Needed for absolute positioning of BubbleDecoration
+        position: 'relative',
     },
-    // Style for the kcal text (z-index ensures it sits above the bubbles)
+    // Style for the Kcal/Status text (z-index ensures it sits above the bubbles)
     kcalPercentageText: {
         fontSize: 14,
         fontWeight: '700' as const,
@@ -489,10 +515,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         zIndex: 2,
     },
-    mgText: {
+    statusText: {
         fontSize: 14,
         fontWeight: '700' as const,
-        color: '#6B7280',
         textAlign: 'center',
         zIndex: 2,
     },
@@ -532,52 +557,6 @@ const styles = StyleSheet.create({
         fontWeight: '700' as const,
         color: '#1B5E20',
         marginBottom: 16,
-    },
-    vitaminRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: 14,
-    },
-    vitaminLeft: {
-        flex: 1,
-    },
-    vitaminName: {
-        fontSize: 15,
-        fontWeight: '600' as const,
-        color: '#1F2937',
-        marginBottom: 4,
-    },
-    vitaminAmount: {
-        fontSize: 13,
-        color: '#6B7280',
-    },
-    vitaminRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        flex: 1,
-    },
-    vitaminBarContainer: {
-        flex: 1,
-        height: 8,
-        backgroundColor: '#F3F4F6',
-        borderRadius: 4,
-        overflow: 'hidden',
-    },
-    vitaminBar: {
-        height: '100%',
-        borderRadius: 4,
-    },
-    vitaminPercent: {
-        fontSize: 14,
-        fontWeight: '700' as const,
-        minWidth: 45,
-        textAlign: 'right',
-    },
-    vitaminDivider: {
-        height: 1,
-        backgroundColor: '#F3F4F6',
     },
     faceAnalysisSection: {
         marginBottom: 24,
