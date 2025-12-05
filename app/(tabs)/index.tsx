@@ -15,7 +15,7 @@ export default function TodayScreen() {
     // --- Daily Goals (Placeholders - must be updated for production) ---
     const goals = {
         calcium: 1180, // mg
-        vitamind: 24, // UI
+        vitamind: 150, // UI
         iron: 250, // mg
         zinc: 90, // mg
         magnesium: 450, // mg
@@ -60,8 +60,8 @@ export default function TodayScreen() {
 
     // Placeholder values for Vitamins/Minerals based on existing fields
     // NOTE: These variables are used to simulate real nutrient data and map to goals.
-    const calciumValue = dailyStats.nutrition.calories; // Using calories field as a placeholder for mg
-    const vitaminDValue = 24; // Using calories field as a placeholder for mg
+    const calciumValue = 1500; // Using calories field as a placeholder for mg
+    const vitaminDValue = 290; // Using calories field as a placeholder for mg
     const ironValue = 224; // Using calories field as a placeholder for mg
     const zincValue= 79; // Using calories field as a placeholder for mg
     const magnesiumValue = dailyStats.nutrition.protein; // Using protein field as a placeholder for mg

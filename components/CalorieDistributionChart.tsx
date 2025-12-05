@@ -198,7 +198,7 @@ export default function CalorieDistributionChart({ nutrition, calorieGoal = 2000
                             {/* Calories Value */}
                             <SvgText
                                 x={SVG_CENTER_X}
-                                y={SVG_CENTER_Y - 5}
+                                y={SVG_CENTER_Y + 18}
                                 textAnchor="middle"
                                 fontWeight="900"
                                 fontSize="38"
@@ -210,19 +210,19 @@ export default function CalorieDistributionChart({ nutrition, calorieGoal = 2000
                             {/* Calories Goal */}
                             <SvgText
                                 x={SVG_CENTER_X}
-                                y={SVG_CENTER_Y + 18}
+                                y={SVG_CENTER_Y + 38}
                                 textAnchor="middle"
                                 fontWeight="500"
                                 fontSize="15"
                                 fill="#9CA3AF"
                             >
-                                / 2000
+                                kcal
                             </SvgText>
 
                             {/* Calories Label */}
                             <SvgText
                                 x={SVG_CENTER_X}
-                                y={SVG_CENTER_Y + 38}
+                                y={SVG_CENTER_Y - 30}
                                 textAnchor="middle"
                                 fontWeight="700"
                                 fontSize="16"
